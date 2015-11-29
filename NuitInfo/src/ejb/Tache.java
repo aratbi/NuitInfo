@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Tache implements Serializable {
@@ -20,11 +21,21 @@ public class Tache implements Serializable {
 	private int id;
 	
 	private String nom;
+	@ManyToOne
+	Personne proprio;
 
 	public Tache(){}
 	
 	public Tache(String nom) {
 		this.nom = nom;
+	}
+	
+	public Personne getProprio() {
+		return proprio;
+	}
+
+	public void setProprio(Personne proprio) {
+		this.proprio = proprio;
 	}
 	
 	public int getId() {
@@ -34,7 +45,7 @@ public class Tache implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	
 	public String getNom() {
 		return nom;
 	}
