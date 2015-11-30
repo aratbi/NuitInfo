@@ -3,45 +3,146 @@
 <%@ page import="java.util.*,ejb.*, servelets.*"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+</<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Nuit d'info </title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap-3.3.6-dist\css\bootstrap.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+
+	<title>Welcome at your TodoList</title>
 </head>
-<body>
-<%  String name = "";
-	if(request.getAttribute("text")!=null){
-	name = (String) request.getAttribute("text");
-	}%>
-ToDo List
-<form method="post" action="Index_serv">
-					<div>
-						<input type="hidden" name="op" value="todo_list">
-							 <input type="text" id="text" name="text"
-									placeholder="text" />
-							
-						<div class="clear"></div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit"
-							style="width: 200px;">OK</button>
+<body class="background fullscreen">
+<%if(request.getAttribute("erreurs")!=null){
+				Collection<String> erreurs =(Collection<String>) request.getAttribute("erreurs");
+				if(!erreurs.isEmpty()){%>
+				<div class="alert alert-danger" role="alert">
+				<b>Erreur !</b><%
+					for(String erreur : erreurs){
+						%><p>-<%=erreur%></p><%
+					}
+					}%>
 					</div>
-					
-					<section>
-					<% if(request.getAttribute("taches")!=null){
-									Collection<Tache> taches = (Collection<Tache>) request.getAttribute("taches");
-											if(!taches.isEmpty()){%>
-					Les taches à faire :
-					<ul class="list-group">
-						<%for(Tache t : taches){%>
-						<li class="list-group-item" style="background-color: #f1f1f1;">
-							<%=t.getNom() %>
-						</li>
-						<%}%>
-					</ul>
-						<%}else {%><h2>Aucune tache</h2>
-						<%}}else {%><h2>Aucune tache</h2>
-						<%}%>
-				</section>
-				</form>
+				<%}%>
+<div class="form centered">
+	<div class="tabs">
+		<ul class="nav">
+			<li class="nav-item">
+				<a data-toggle="tab" href="#login-form" class="active">Sign in</a>
+			</li><!--
+					--><li class="nav-item">
+				<a data-toggle="tab" href="#registration-form" >Sign up</a>
+			</li><!--
+			--><li class="nav-item">
+				<a data-toggle="tab" href="#resetpassword-form">Reset Password</a>
+			</li><!--
+		--></ul>
+	</div>
+
+	<div class="tab-content">
+		<div id="login-form" class="tab-pane fade in active">
+			<p class="message">Please fill in this form to get your todo list:</p>
+			<form method="post" action="Index_serv" name="formular">
+				<input type="hidden" name="op" value="seconnecter" />
+				<div class="form-item">
+					<input type="text" placeholder="Username" name="identifiant">	
+				</div>
+
+				</br>
+
+				<div class="form-item">
+					<input type="password" placeholder="Password" name="mdp">
+				</div>
+				</br>
+
+				<div class="div-btn">
+					<input type="submit" class="btn" value="Sign in"> 
+				</div>
+			</form>
+		</div>
+
+	<div id="registration-form" class="tab-pane fade in">
+			<p class="message">Please fill in this form to create your account:</p>
+			<form method="post" action="Index_serv" name="formular">
+				<input type="hidden" name="op" value="s'inscrire" /> 
+				<div class="form-item">
+					<input type="Nom" id="Nom" name="nom"
+					class="form-control" placeholder="Nom" required autofocus
+					value="<%if(request.getAttribute("nom")!=null)request.getAttribute("nom");%>"> 
+				</div>
+
+				</br>
+				<div class="form-item">
+					<input type="Prenom" id="Prenom" name="prenom" class="form-control"
+					placeholder="Prénom" required autofocus
+					value="<%if(request.getAttribute("prenom")!=null)request.getAttribute("prenom");%>">
+				</div>
+
+				</br>
+
+				<div class="form-item">
+					<input
+					type="identifiant" id="inputId" name="identifiant"
+					class="form-control" placeholder="identifiant" required autofocus
+					value="<%if(request.getAttribute("identifiant")!=null)request.getAttribute("identifiant");%>">
+				</div>
+				</br>
+				<div class="form-item">
+					<input
+					type="email" id="inputEmail" name="email" class="form-control"
+					placeholder="L'adresse mail" required autofocus
+					value="<%if(request.getAttribute("email")!=null)request.getAttribute("email");%>">
+				</div>
+				</br>
+
+				</br>
+				<div class="form-item">
+					<input
+					type="password" id="inputPassword" name="mdp" class="form-control"
+					placeholder="Mot de passe" required>
+				</div>
+				</br>
+				
+				</br>
+				<div class="form-item">
+					 <input type="password" id="inputConfirmationPassword"
+						name="confirmationMdp" class="form-control"
+						placeholder="Confirmation mot de passe" required>
+				</div>
+				</br>
+				
+				<div class="div-btn">
+					<input type="submit" class="btn" Value="Sign up"> 
+				</div>
+			</form>
+		</div>
+	<div id="resetpassword-form" class="tab-pane fade in">
+			<p class="message">Please enter your email :</p>
+
+			<form>
+
+				</br>
+				<div class="form-item">
+					<input type="text" placeholder="Email">	
+				</div>
+
+				</br>
+
+				</br>
+
+				<div class="div-btn">
+					<input type="submit" class="btn" value="Send"> 
+				</div>
+			</form>
+	</form>
+	</div>
+	</div>
+</div>
+
+
+
 </body>
 </html>

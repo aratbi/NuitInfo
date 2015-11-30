@@ -19,6 +19,9 @@ public class Facade {
 	private EntityManager em;
 	private Collection<String> erreurs = new ArrayList<String>();
 	
+	//resultat pour verification.
+		private String resultat;
+	
 	
 	public void AjouterTache(Tache tache, int idPers) {
 		tache.setProprio(getPersonne(idPers));
@@ -141,4 +144,58 @@ public class Facade {
 		}
 	}
 	
+	/**Valider l'authentification et renvoie la personne si aucune erreur. */
+	private Personne validationAuth(String ident,String mdp) throws Exception {
+		Personne p = null;
+		if ( ident != null ) {
+			Collection<Personne> personnes = em.createQuery("select p from Personne p where p.identifiant Like :identUtil").
+					setParameter("identUtil",ident ).getResultList();
+			Iterator<Personne> it = personnes.iterator();
+			if(it.hasNext())
+				p=it.next();
+	
+			if(p==null){
+				throw new Exception("Identifiant incorrect. ");
+			}
+			else {
+				if ( mdp != null ) {
+					if(!p.getMdp().equals(mdp)){
+						throw new Exception( "mot de passe incorrect." );
+					}
+				}
+	
+				else {
+					throw new Exception( "Merci de saisir votre mot de passe." );
+				}
+			}
+		}
+		else{
+			throw new Exception( "Merci de saisir votre identifiant." );
+		}
+		return p;
+	}
+	/**Se connecter en fournissant un identifiant et un mot de passe.*/
+	public void connecter( String ident , String motDePasse ) {
+
+		/* Validation de l'authentification. */
+		Personne p = null;
+
+		try {
+			p=validationAuth( ident, motDePasse );
+		} catch ( Exception e ) {
+			setErreur(e.getMessage() );
+			System.out.println("erreur dans validationAuth");
+		}
+
+		/* Initialisation du resultat global de la validation. */
+		if ( erreurs.isEmpty() ) {
+			resultat = "Succes de la connexion.";
+		} else {
+			resultat = "echec de la connexion.";
+		}
+	}
+	/**Renvoie resultat. */
+	public String getResultat() {
+		return resultat;
+	}
 }
